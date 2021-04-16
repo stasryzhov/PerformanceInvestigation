@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 class BigIntegerIterator {
-    private List<String> contain = new ArrayList<>(500);
-    private List<Integer> reference = new ArrayList<>(500);
+    private final List<String> contain = new ArrayList<>(500);
+    private final List<Integer> reference = new ArrayList<>(500);
 
     BigIntegerIterator(int i) {
         contain.add("" + i + "");
@@ -25,14 +25,13 @@ class BigIntegerIterator {
 
 public class PrimeCalculator {
     public static void main(String[] args) throws InterruptedException {
-        for (Integer prime : getPrimes()) {
+        for (Integer prime : getPrimes(Integer.parseInt(args[0]))) {
             System.out.print(prime + "\n");
         }
     }
 
-    private static List<Integer> getPrimes() throws InterruptedException {
+    private static List<Integer> getPrimes(int maxPrime) throws InterruptedException {
         List<Integer> primeNumbers = Collections.synchronizedList(new LinkedList<>());
-        int maxPrime = 200_000;
         List<BigIntegerIterator> myFiller = Stream.generate(new Supplier<BigIntegerIterator>() {
             int i = 2;
 
