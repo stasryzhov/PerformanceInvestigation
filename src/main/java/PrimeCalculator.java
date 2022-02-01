@@ -24,18 +24,15 @@ public class PrimeCalculator {
                 return i++;
             }
         }).limit(maxPrime).collect(Collectors.toList());
-        List<Integer> primeNumbers = Collections.synchronizedList(numbers);
-
-        List<Integer> primeNumbersToRemove = Collections.synchronizedList(new LinkedList<>());
-        CountDownLatch latch = new CountDownLatch(maxPrime);
+        List<Integer> primeNumbers = Collections.synchronizedList(new LinkedList<>());
+        CountDownLatch latch = new CountDownLatch(maxPrime - 1);
         ExecutorService executors = Executors.newFixedThreadPool(Math.max(maxPrime / 100, 3000));
-        synchronized (primeNumbersToRemove) {
-            for (Integer candidate : primeNumbers) {
+        synchronized (primeNumbers) {
+            for (int i = 2; i <= maxPrime; i++) {
+                int candidate = i;
                 executors.submit(() -> {
-                    try {
-                        isPrime(primeNumbers, candidate);
-                    } catch (Exception e) {
-                        primeNumbersToRemove.add(candidate);
+                    if (isPrime(numbers, candidate)) {
+                        primeNumbers.add(candidate);
                     }
                     latch.countDown();
                 });
@@ -43,18 +40,17 @@ public class PrimeCalculator {
         }
         latch.await();
         executors.shutdownNow();
-        for (Integer toRemove : primeNumbersToRemove) {
-            primeNumbers.remove(toRemove);
-        }
 
+        Collections.sort(primeNumbers);
         return primeNumbers;
     }
 
-    private static void isPrime(List<Integer> primeNumbers, Integer candidate) throws Exception {
-        for (Integer j : primeNumbers.subList(0, candidate - 2)) {
+    private static boolean isPrime(List<Integer> numbers, int candidate) {
+        for (Integer j : numbers.subList(0, candidate - 2)) {
             if (candidate % j == 0) {
-                throw new Exception();
+                return false;
             }
         }
+        return true;
     }
 }
