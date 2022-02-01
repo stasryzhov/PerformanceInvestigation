@@ -2,13 +2,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PrimeCalculator {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         for (Integer prime : getPrimes(Integer.parseInt(args[0]))) {
             System.out.print(prime + "\n");
         }
     }
 
     private static List<Integer> getPrimes(int maxPrime) {
+        if (maxPrime <= 1) {
+            throw new IllegalArgumentException("Max prime number must be > 1");
+        }
         boolean[] isPrimeMarks = new boolean[maxPrime + 1];
         fillWithInitialValues(isPrimeMarks);
         applySieveOfEratosthenes(isPrimeMarks);
