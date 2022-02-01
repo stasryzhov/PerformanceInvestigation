@@ -46,7 +46,7 @@ public class PrimeCalculator {
     }
 
     private static boolean isPrime(List<Integer> numbers, int candidate) {
-        for (Integer j : numbers.subList(0, candidate - 2)) {
+        for (Integer j : numbers.subList(0, (int) Math.sqrt(candidate - 2))) {
             if (candidate % j == 0) {
                 return false;
             }
