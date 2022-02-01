@@ -27,16 +27,14 @@ public class PrimeCalculator {
         List<Integer> primeNumbers = Collections.synchronizedList(new LinkedList<>());
         CountDownLatch latch = new CountDownLatch(maxPrime - 1);
         ExecutorService executors = Executors.newFixedThreadPool(50);
-        synchronized (primeNumbers) {
-            for (int i = 2; i <= maxPrime; i++) {
-                int candidate = i;
-                executors.submit(() -> {
-                    if (isPrime(numbers, candidate)) {
-                        primeNumbers.add(candidate);
-                    }
-                    latch.countDown();
-                });
-            }
+        for (int i = 2; i <= maxPrime; i++) {
+            int candidate = i;
+            executors.submit(() -> {
+                if (isPrime(numbers, candidate)) {
+                    primeNumbers.add(candidate);
+                }
+                latch.countDown();
+            });
         }
         latch.await();
         executors.shutdownNow();
