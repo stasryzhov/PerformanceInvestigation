@@ -75,7 +75,7 @@ Solutions:
 - Before: 16.094ms
 - After: 4.340ms
 
-### Fourth stage (optional)
+### Fourth stage (optional) can be found here `src/main/java/SieveOfEratosthenesPrimeCalculator.java`
 
 Most probably, this stage should be out of scope of the multithreading related assignment. However, further optimization
 is possible with the usage of pre-calculated prime numbers, e.g. via the Sieve of Eratosthenes algorithm. This would
