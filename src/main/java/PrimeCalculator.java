@@ -1,8 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class PrimeCalculator {
     public static void main(String[] args) throws InterruptedException {
@@ -11,40 +8,36 @@ public class PrimeCalculator {
         }
     }
 
-    private static List<Integer> getPrimes(int maxPrime) throws InterruptedException {
-        boolean[] numbers = new boolean[maxPrime];
-        CountDownLatch latch = new CountDownLatch(maxPrime - 1);
-        ExecutorService executors = Executors.newFixedThreadPool(50);
-        for (int i = 2; i <= maxPrime; i++) {
-            int candidate = i;
-            executors.submit(() -> {
-                if (isPrime(candidate)) {
-                    numbers[candidate] = true;
-                }
-                latch.countDown();
-            });
-        }
-        latch.await();
-        executors.shutdownNow();
-        return collectPrimes(numbers);
+    private static List<Integer> getPrimes(int maxPrime) {
+        boolean[] isPrimeMarks = new boolean[maxPrime + 1];
+        fillWithInitialValues(isPrimeMarks);
+        applySieveOfEratosthenes(isPrimeMarks);
+        return collectPrimes(isPrimeMarks);
     }
 
-    private static List<Integer> collectPrimes(boolean[] numbers) {
+    private static List<Integer> collectPrimes(boolean[] isPrimeMarks) {
         List<Integer> primeNumbers = new ArrayList<>();
-        for (int i = 0; i < numbers.length; i++) {
-            if (numbers[i]) {
+        for (int i = 0; i < isPrimeMarks.length; i++) {
+            if (isPrimeMarks[i]) {
                 primeNumbers.add(i);
             }
         }
         return primeNumbers;
     }
 
-    private static boolean isPrime(int candidate) {
-        for (int i = 2; i * i <= candidate; i++) {
-            if (candidate % i == 0) {
-                return false;
+    private static void applySieveOfEratosthenes(boolean[] isPrimeMarks) {
+        for (int factor = 2; factor * factor < isPrimeMarks.length; factor++) {
+            if (isPrimeMarks[factor]) {
+                for (int j = factor; factor * j < isPrimeMarks.length; j++) {
+                    isPrimeMarks[factor * j] = false;
+                }
             }
         }
-        return true;
+    }
+
+    private static void fillWithInitialValues(boolean[] isPrimeMarks) {
+        for (int i = 2; i < isPrimeMarks.length; i++) {
+            isPrimeMarks[i] = true;
+        }
     }
 }
