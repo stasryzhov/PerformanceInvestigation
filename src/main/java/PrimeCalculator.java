@@ -26,7 +26,7 @@ public class PrimeCalculator {
         }).limit(maxPrime).collect(Collectors.toList());
         List<Integer> primeNumbers = Collections.synchronizedList(new LinkedList<>());
         CountDownLatch latch = new CountDownLatch(maxPrime - 1);
-        ExecutorService executors = Executors.newFixedThreadPool(Math.max(maxPrime / 100, 3000));
+        ExecutorService executors = Executors.newFixedThreadPool(50);
         synchronized (primeNumbers) {
             for (int i = 2; i <= maxPrime; i++) {
                 int candidate = i;
