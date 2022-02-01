@@ -1,7 +1,11 @@
 # Prime numbers calculation: Profiling and Optimization
 
-The optimization is done sequentially as specified in the solutions below. Check commits sequentially to see the atomic
-optimizations.
+The optimization is done sequentially as specified in the solutions below.
+
+Check commits sequentially to see the atomic optimizations.
+
+Snapshots can be
+found [in this branch](https://github.com/stasryzhov/PerformanceInvestigation/tree/fix/optimization/snapshots):
 
 ## Optimization stages
 
