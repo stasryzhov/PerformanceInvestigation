@@ -1,30 +1,44 @@
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class PrimeCalculator {
-    public static void main(String[] args) throws InterruptedException {
-        for (Integer prime : getPrimes(Integer.parseInt(args[0]))) {
-            System.out.print(prime + "\n");
+    public static void main(String[] args) throws InterruptedException, IOException {
+        StringBuilder stringBuilder = new StringBuilder();
+        Instant startTime = Instant.now();
+        List<Integer> primes = getPrimes(Integer.parseInt(args[0]));
+        Instant endTime = Instant.now();
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(System.out))) {
+            for (Integer prime : primes) {
+                stringBuilder.append(prime).append(System.lineSeparator());
+            }
+            writer.write(stringBuilder.toString());
+            writer.write("Primes calculation time: " + Duration.between(startTime, endTime));
         }
     }
 
     private static List<Integer> getPrimes(int maxPrime) throws InterruptedException {
         boolean[] isPrimeMarks = new boolean[maxPrime];
-        CountDownLatch latch = new CountDownLatch(maxPrime - 1);
-        ExecutorService executors = Executors.newFixedThreadPool(50);
+        ExecutorService executors = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+        List<Callable<Boolean>> isPrimeTasks = new ArrayList<>();
         for (int i = 2; i <= maxPrime; i++) {
             int candidate = i;
-            executors.submit(() -> {
-                if (isPrime(candidate)) {
+            isPrimeTasks.add(() -> {
+                final boolean isPrime = isPrime(candidate);
+                if (isPrime) {
                     isPrimeMarks[candidate] = true;
                 }
-                latch.countDown();
+                return isPrime;
             });
         }
-        latch.await();
+        executors.invokeAll(isPrimeTasks);
         executors.shutdownNow();
         return collectPrimes(isPrimeMarks);
     }
