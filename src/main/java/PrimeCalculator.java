@@ -54,8 +54,17 @@ public class PrimeCalculator {
     }
 
     private static boolean isPrime(int candidate) {
-        for (int i = 2; i * i <= candidate; i++) {
-            if (candidate % i == 0) {
+        if (candidate < 2) {
+            return false;
+        }
+        if (candidate % 2 == 0) {
+            return candidate == 2;
+        }
+        if (candidate % 3 == 0) {
+            return candidate == 3;
+        }
+        for (int i = 5; i * i <= candidate; i += 6) {
+            if (candidate % i == 0 || candidate % (i + 2) == 0) {
                 return false;
             }
         }
